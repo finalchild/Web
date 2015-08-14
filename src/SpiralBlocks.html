@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> <title>Spiral blocks</title>
+        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <a class="info" href="/">Developed by @ChalkPE</a>
+
+        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script type="text/javascript">
+            var BLOCK_SIZE = 30;
+            var COLOURS = ['#69D2E7', '#A7DBD8', '#E0E4CC', '#F38630', '#FA6900', '#FF4E50', '#F9D423'];
+
+            var Direction = {
+                UP: 0,
+                RIGHT: 1,
+                DOWN: 2,
+                LEFT: 3
+            };
+
+            var last = {x: 100, y: 100, direction: Direction.RIGHT};
+            var blocks = {};
+
+            var isClockwise = true;
+
+            var sketch = Sketch.create({
+                container: document.getElementById("container"), autoclear: false, interval: <?php echo is_numeric($_GET["interval"]) ? $_GET["interval"] : "1" ?>
+            });
+
+            sketch.setup = function(){
+                blocks = {};
+                BLOCK_SIZE = min(sketch.width, sketch.height) / <?php echo is_numeric($_GET["count"]) ? $_GET["count"] : "25" ?>;
+
+                last.x = floor(sketch.width / BLOCK_SIZE / 2);
+                last.y = floor(sketch.height / BLOCK_SIZE / 2);
+                last.direction = Direction.RIGHT;
+
+                sketch.setBlock(last.x, last.y, isClockwise ? "#E0E4CC" : "#222222");
+            };
+
+            sketch.resize = function(){
+                isClockwise = true;
+
+                sketch.clear();
+                sketch.setup();
+            };
+
+            sketch.update = function(){
+                isClockwise ? sketch.turnRight() : sketch.turnLeft();
+                var next = sketch.getNext(last);
+
+                if(sketch.getBlock(next[0], next[1])){
+                    isClockwise ? sketch.turnLeft() : sketch.turnRight();
+                    next = sketch.getNext(last);
+                }
+
+                sketch.setBlock(next[0], next[1], isClockwise ? random(COLOURS) : "#222222"); //"#" + floor(random(16777215)).toString(16));
+                last.x = next[0]; last.y = next[1];
+
+                if(last.x < -1 && last.y < -1){
+                    isClockwise = !isClockwise;
+                    sketch.setup();
+                }
+            }
+
+            sketch.setBlock = function(x, y, color){
+                if(color){
+                    sketch.fillStyle = color;
+                    sketch.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+                    blocks[x + ":" + y] = color;
+                }else{
+                    sketch.clearRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+                    blocks[x + ":" + y] = null;
+                }
+            };
+
+            sketch.getBlock = function(x, y){
+                return blocks[x + ":" + y];
+            };
+
+            sketch.getNext = function(status){
+                switch(status.direction){
+                    case Direction.UP:
+                        return [status.x, status.y - 1];
+
+                    case Direction.RIGHT:
+                        return [status.x + 1, status.y];
+
+                    case Direction.DOWN:
+                        return [status.x, status.y + 1];
+
+                    case Direction.LEFT:
+                        return [status.x - 1, status.y];
+                }
+            };
+
+            sketch.turnRight = function(){
+                if(++last.direction > Direction.LEFT) last.direction = Direction.UP;
+            };
+
+            sketch.turnLeft = function(){
+                if(--last.direction < Direction.UP) last.direction = Direction.LEFT;
+            };
+        </script>
+    </body>
+</html>

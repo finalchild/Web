@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> <title>Diurnal circles</title>
+        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <a class="info" href="/">Developed by @ChalkPE<?php if($_GET["mcpe"] === "korea") echo " - Hello, M.K user!"; ?></a>
+
+        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script type="text/javascript">
+            const CIRCLE_WIDTH = <?php echo is_numeric($_GET["width"]) ? $_GET["width"] : "6" ?>;
+            const TICK = CIRCLE_WIDTH;
+
+            function DiurnalCircle(){
+                this.init();
+            }
+
+            DiurnalCircle.prototype = {
+                init: function(){
+                    this.color = "#" + floor(random(0x555555, 0xFFFFFF)).toString(16);
+
+                    this.radius = sqrt(pow(sketch.width, 2) + pow(sketch.height, 2));
+
+                    this.angle = random(360);
+                    this.startAngle = random(360);
+                    this.endAngle = random(360);
+
+                    this.speed = random(-180, 180);
+                    this.alive = true;
+                },
+
+                move: function(){
+                    this.radius -= CIRCLE_WIDTH;
+                    this.angle += (sin(this.radius / 180 * PI) + 1.5) * 0.5 * CIRCLE_WIDTH;
+
+                    this.alive = this.radius > 0;
+                },
+
+                draw: function(context){
+                    context.lineCap = "round";
+                    context.lineWidth = CIRCLE_WIDTH;
+                    context.<?php echo isset($_GET["style"]) ? $_GET["style"] : "stroke" ?>Style = this.color;
+
+                    var angle = this.angle * this.speed / <?php echo is_numeric($_GET["slowness"]) ? $_GET["slowness"] : "100" ?>;
+                    var startAngle = (angle + this.startAngle) / 180 * PI;
+                    var endAngle = (angle + this.endAngle) / 180 * PI;
+
+                    context.beginPath();
+                    context.arc(sketch.width * 0.5, sketch.height * 0.5, this.radius * 0.5, startAngle, endAngle);
+                    context.<?php echo isset($_GET["style"]) ? $_GET["style"] : "stroke" ?>();
+                }
+            };
+
+            var circles = [];
+            var currentTick = TICK;
+
+            var sketch = Sketch.create({
+                container: document.getElementById("container"),
+                interval: <?php echo is_numeric($_GET["interval"]) ? $_GET["interval"] : "5" ?>, autopause: false, autoclear: <?php echo isset($_GET["autoclear"]) ? $_GET["autoclear"] : "true" ?>
+            });
+
+            sketch.update = function(){
+                if(--currentTick < 0){
+                    currentTick = TICK;
+                    circles.unshift(new DiurnalCircle());
+                }
+
+                circles = circles.filter(function(circle){
+                    return circle.alive;
+                });
+
+                circles.forEach(function(circle){
+                    circle.move();
+                });
+            };
+
+            sketch.draw = function(){
+                circles.forEach(function(circle){
+                    circle.draw(sketch);
+                });
+            };
+        </script>
+    </body>
+</html>
