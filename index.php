@@ -28,6 +28,12 @@
                     <br />
                     Spiral blocks</a>
             </div>
+            <div style='display: inline-block; vertical-align: middle; margin-left: 16px'>
+                <a href="/src/Present.html">
+                    <img src="/assets/sketch-preview/Present.png" width="165px" height="165px" />
+                    <br />
+                    Present</a>
+            </div>
         </div>
     </body>
 </html>
