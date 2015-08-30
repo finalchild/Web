@@ -90,7 +90,7 @@
             };
 
             sketch.drawLine = function(start, end, color){
-                sketch.strokeStyle = color || "#E0E4CC";
+                sketch.strokeStyle = color <?php if(isset($_GET["color"])) echo "|| \"#" . $_GET["color"] . "\"" ?> || "#E0E4CC";
 
                 sketch.beginPath();
                 sketch.moveTo(start.getX(), start.getY());
