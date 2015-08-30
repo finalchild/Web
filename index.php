@@ -34,6 +34,12 @@
                     <br />
                     Present</a>
             </div>
+            <div style='display: inline-block; vertical-align: middle; margin-left: 16px'>
+                <a href="/src/Triangle.html">
+                    <img src="/assets/sketch-preview/Triangle.png" width="165px" height="165px" />
+                    <br />
+                    Triangle</a>
+            </div>
         </div>
     </body>
 </html>
