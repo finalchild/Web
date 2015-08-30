@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> <title>Triangle</title>
+        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <a class="info" href="/">Developed by @ChalkPE</a>
+
+        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script type="text/javascript">
+            function Point(x, y, doFloor){
+                this.setPoint(x, y, doFloor);
+            }
+
+            Point.prototype = {
+                getX: function(doFloor){
+                    return doFloor ? floor(this.x) : this.x;
+                },
+
+                getY: function(doFloor){
+                    return doFloor ? floor(this.y) : this.y;
+                },
+
+                setPoint: function(x, y, doFloor){
+                    if(x instanceof Point){
+                        doFloor = y;
+
+                        y = x.getY();
+                        x = x.getX();
+                    }
+
+                    this.x = doFloor ? floor(x) : x;
+                    this.y = doFloor ? floor(y) : y;
+                },
+
+                add: function(xAmount, yAmount, doFloor){
+                    this.setPoint(this.getX(doFloor) + xAmount, this.getY(doFloor) + yAmount, doFloor);
+                },
+
+                toArray: function(doFloor){
+                    return [this.getX(doFloor), this.getY(doFloor)];
+                },
+
+                toString: function(doFloor){
+                    return "Point(" + this.toArray(doFloor).join(", ") + ")";
+                },
+
+                equals: function(point, doFloor){
+                    return this.getX(doFloor) === point.getX(doFloor) && this.getY(doFloor) === point.getY(doFloor);
+                },
+
+                distance: function(point, doFloor){
+                    var diff = new Point(this.getX(doFloor) - point.getX(doFloor), this.getY(doFloor), point.getY(doFloor), doFloor);
+
+                    return Math.sqrt(diff.getX(doFloor) * diff.getX(doFloor) + diff.getY(doFloor) * diff.getY(doFloor));
+                }
+            };
+
+            var sketch = Sketch.create({
+                container: document.getElementById("container"), interval: 40, autopause: false
+            });
+
+            var minCount = 12;
+            var gap, maxPoint;
+
+            var points = [];
+
+            sketch.setup = sketch.resize = function(){
+                gap = min(sketch.width, sketch.height) / minCount;
+                maxPoint = new Point(floor(sketch.width / gap) + 1, floor(sketch.height / (gap * sqrt(3) / 2)) + 1, true);
+            };
+
+            sketch.draw = function(){
+                for(var x = 0; x <= maxPoint.getX(); x++){
+                    for(var y = 0; y <= maxPoint.getY(); y++){
+                        var start = sketch.getPoint(x, y);
+
+                        if(random(3) > 1) sketch.drawLine(start, sketch.getPoint(x + 1, y)); //밑변
+
+                        if(random(3) > 1) sketch.drawLine(start, sketch.getPoint(x, y + 1)); //y가 홀수: 왼쪽 변, y가 짝수: 오른쪽 변
+                        if(random(3) > 1) sketch.drawLine(start, sketch.getPoint(x + 1 - (y % 2 * 2), y + 1)); //나머지 변
+                    }
+                }
+            };
+
+            sketch.getPoint = function(x, y){
+                return new Point((x - ((y % 2 + 1) / 2)) * gap, y * (sqrt(3) / 2) * gap);
+            };
+
+            sketch.drawLine = function(start, end, color){
+                sketch.strokeStyle = color || "#E0E4CC";
+
+                sketch.beginPath();
+                sketch.moveTo(start.getX(), start.getY());
+                sketch.lineTo(end.getX(), end.getY());
+
+                sketch.stroke();
+            };
+
+            sketch.click = function(){
+                sketch.toggle();
+            }
+
+
+        </script>
+    </body>
+</html>
