@@ -9,55 +9,9 @@
         <a class="info" href="/">Developed by @ChalkPE</a>
 
         <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script src="/src/js/Point.js"></script>
+
         <script type="text/javascript">
-            function Point(x, y, doFloor){
-                this.setPoint(x, y, doFloor);
-            }
-
-            Point.prototype = {
-                getX: function(doFloor){
-                    return doFloor ? floor(this.x) : this.x;
-                },
-
-                getY: function(doFloor){
-                    return doFloor ? floor(this.y) : this.y;
-                },
-
-                setPoint: function(x, y, doFloor){
-                    if(x instanceof Point){
-                        doFloor = y;
-
-                        y = x.getY();
-                        x = x.getX();
-                    }
-
-                    this.x = doFloor ? floor(x) : x;
-                    this.y = doFloor ? floor(y) : y;
-                },
-
-                add: function(xAmount, yAmount, doFloor){
-                    this.setPoint(this.getX(doFloor) + xAmount, this.getY(doFloor) + yAmount, doFloor);
-                },
-
-                toArray: function(doFloor){
-                    return [this.getX(doFloor), this.getY(doFloor)];
-                },
-
-                toString: function(doFloor){
-                    return "Point(" + this.toArray(doFloor).join(", ") + ")";
-                },
-
-                equals: function(point, doFloor){
-                    return this.getX(doFloor) === point.getX(doFloor) && this.getY(doFloor) === point.getY(doFloor);
-                },
-
-                distance: function(point, doFloor){
-                    var diff = new Point(this.getX(doFloor) - point.getX(doFloor), this.getY(doFloor), point.getY(doFloor), doFloor);
-
-                    return Math.sqrt(diff.getX(doFloor) * diff.getX(doFloor) + diff.getY(doFloor) * diff.getY(doFloor));
-                }
-            };
-
             var sketch = Sketch.create({
                 container: document.getElementById("container"), interval: 40, autopause: false
             });
