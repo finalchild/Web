@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> <title>Group</title>
+        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <a class="info" href="/">Developed by @ChalkPE</a>
+
+        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script src="/src/js/Point.js"></script>
+
+        <script type="text/javascript">
+            var points = [];
+            var gap = 0;
+
+            var tick = 0;
+
+            var sketch = Sketch.create({
+                container: document.getElementById("container")
+            });
+
+            sketch.setup = sketch.resize = function(){
+                gap = min(sketch.width, sketch.height) / 30;
+            };
+
+            sketch.click = function(){
+                points.push(new Point(sketch.mouse.x, sketch.mouse.y));
+            };
+
+            sketch.update = function(){
+                if(random(4) > 1) points.push(new Point(random(sketch.width), random(sketch.height)));
+            }
+
+            sketch.draw = function(){
+                var taken = [];
+
+                for(var i = 0; i < points.length; i++){
+                    var point = points[i];
+                    var neighbors = [];
+
+                    for(var j = 0; j < points.length; j++){
+                        var anotherPoint = points[j];
+                        if(point.distance(anotherPoint) < gap && taken.indexOf(anotherPoint) === -1){
+                            neighbors.push(anotherPoint);
+                        }
+                    }
+
+                    if(neighbors.length >= 5){
+                        sketch.strokeStyle = "#00FF00";
+                        sketch.lineWidth = 1;
+
+                        sketch.beginPath();
+                        sketch.arc(point.x, point.y, gap, 0, TWO_PI);
+                        sketch.stroke();
+
+                        neighbors.forEach(function(n){
+                            if(taken.indexOf(n) === -1){
+                                taken.push(n);
+                            }
+                        });
+                    }
+
+                    sketch.fillStyle = "#FFFFFF";
+
+                    sketch.beginPath();
+                    sketch.arc(point.x, point.y, 3, 0, TWO_PI);
+                    sketch.fill();
+                }
+
+                Array.prototype.push.apply(totalTaken, taken);
+
+                sketch.strokeStyle = "#440000";
+                sketch.lineWidth = 1;
+
+                sketch.beginPath();
+                sketch.arc(sketch.mouse.x, sketch.mouse.y, gap, 0, TWO_PI);
+                sketch.stroke();
+
+                tick++;
+            }
+        </script>
+    </body>
+</html>
