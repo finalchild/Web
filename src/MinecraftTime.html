@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> <title>MinecraftTime</title>
+        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <a class="info" href="/">Developed by @ChalkPE</a>
+
+        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script type="text/javascript">
+            function Time(time){
+                this.time = time;
+            }
+
+        	Time.HOUR_OFFSET = 6;
+        	Time.TICK_ONE_HOUR = 1000;
+
+            Time.prototype = {
+            	getTotalHours: function(){
+            		return (this.time / Time.TICK_ONE_HOUR) + Time.HOUR_OFFSET;
+            	},
+
+            	getTotalDays: function(){
+            		return (this.getTotalHours() / 24);
+            	},
+
+                getDays: function(){
+                    return floor(this.getTotalDays());
+                },
+
+            	getHours: function(){
+            		return (this.getTotalHours() % 24);
+            	},
+
+                getMinutes: function(){
+                    return (this.getHours() % 1) * 60;
+                },
+
+                getSeconds: function(){
+                    return (this.getMinutes() % 1) * 60;
+                },
+
+                getMinecraftSeconds: function(){
+                    return (this.getMinutes() % 1) * 50;
+                }
+            };
+
+
+            var tick = 0;
+
+            var sketch = Sketch.create({
+                container: document.getElementById("container"), autopause: false, interval: 2
+            });
+
+            sketch.update = function(){
+                tick += 1;
+            };
+
+            sketch.draw = function(){
+                var time = new Time(tick);
+
+                sketch.font = "20pt Inconsolata";
+                sketch.fillStyle = "#FFFFFF";
+
+                sketch.fillText("MinecraftTick: " + time.time, 10, 30);
+                sketch.fillText("TotalHours: " + time.getTotalHours().toFixed(2), 10, 90);
+                sketch.fillText("TotalDays:  " + time.getTotalDays().toFixed(2), 10, 120);
+
+
+                sketch.fillText("Days:             " + time.getDays(), 10, 180);
+                sketch.fillText("Hours:            " + time.getHours().toFixed(2), 10, 210);
+                sketch.fillText("Minutes:          " + time.getMinutes().toFixed(2), 10, 240);
+                sketch.fillText("Seconds:          " + time.getSeconds().toFixed(2), 10, 270);
+                sketch.fillText("MinecraftSeconds: " + time.getMinecraftSeconds().toFixed(2), 10, 300);
+
+                sketch.fillText("RealTime      (24h, 60m, 60s): " + ("0" + floor(time.getHours())).slice(-2) + ":" + ("0" + floor(time.getMinutes())).slice(-2) + ":" + ("0" + floor(time.getSeconds())).slice(-2), 10, 360);
+                sketch.fillText("MinecraftTime (24h, 60m, 50s): " + ("0" + floor(time.getHours())).slice(-2) + ":" + ("0" + floor(time.getMinutes())).slice(-2) + ":" + ("0" + floor(time.getMinecraftSeconds())).slice(-2), 10, 390);
+            }
+
+            sketch.click = function(){
+                sketch.toggle();
+            }
+        </script>
+    </body>
+</html>
