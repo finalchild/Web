@@ -61,22 +61,22 @@
             sketch.draw = function(){
                 var time = new Time(tick);
 
-                sketch.font = "20pt Inconsolata";
+                sketch.font = "16pt Inconsolata";
                 sketch.fillStyle = "#FFFFFF";
 
-                sketch.fillText("MinecraftTick: " + time.time, 10, 30);
-                sketch.fillText("TotalHours: " + time.getTotalHours().toFixed(2), 10, 90);
-                sketch.fillText("TotalDays:  " + time.getTotalDays().toFixed(2), 10, 120);
+                sketch.fillText("MinecraftTick: " + time.time, 10, 25);
 
+                sketch.fillText("TotalHours: " + time.getTotalHours().toFixed(2), 10, 75);
+                sketch.fillText("TotalDays:  " + time.getTotalDays().toFixed(2), 10, 100);
 
-                sketch.fillText("Days:             " + time.getDays(), 10, 180);
-                sketch.fillText("Hours:            " + time.getHours().toFixed(2), 10, 210);
-                sketch.fillText("Minutes:          " + time.getMinutes().toFixed(2), 10, 240);
-                sketch.fillText("Seconds:          " + time.getSeconds().toFixed(2), 10, 270);
-                sketch.fillText("MinecraftSeconds: " + time.getMinecraftSeconds().toFixed(2), 10, 300);
+                sketch.fillText("Days:             " + time.getDays(), 10, 150);
+                sketch.fillText("Hours:            " + time.getHours().toFixed(2), 10, 175);
+                sketch.fillText("Minutes:          " + time.getMinutes().toFixed(2), 10, 200);
+                sketch.fillText("Seconds:          " + time.getSeconds().toFixed(2), 10, 225);
+                sketch.fillText("MinecraftSeconds: " + time.getMinecraftSeconds().toFixed(2), 10, 250);
 
-                sketch.fillText("RealTime      (24h, 60m, 60s): " + ("0" + floor(time.getHours())).slice(-2) + ":" + ("0" + floor(time.getMinutes())).slice(-2) + ":" + ("0" + floor(time.getSeconds())).slice(-2), 10, 360);
-                sketch.fillText("MinecraftTime (24h, 60m, 50s): " + ("0" + floor(time.getHours())).slice(-2) + ":" + ("0" + floor(time.getMinutes())).slice(-2) + ":" + ("0" + floor(time.getMinecraftSeconds())).slice(-2), 10, 390);
+                sketch.fillText("RealTime:      " + ("0" + floor(time.getHours())).slice(-2) + ":" + ("0" + floor(time.getMinutes())).slice(-2) + ":" + ("0" + floor(time.getSeconds())).slice(-2) + " (24h, 60m, 60s)", 10, 290);
+                sketch.fillText("MinecraftTime: " + ("0" + floor(time.getHours())).slice(-2) + ":" + ("0" + floor(time.getMinutes())).slice(-2) + ":" + ("0" + floor(time.getMinecraftSeconds())).slice(-2) + " (24h, 60m, 50s)", 10, 315);
             }
 
             sketch.click = function(){

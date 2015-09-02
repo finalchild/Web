@@ -14,6 +14,10 @@
                 margin-right: 32px;
                 margin-bottom: 32px;
             }
+
+            .preview img {
+                width: 165px; height: 165px;
+            }
         </style>
     </head>
     <body>
@@ -28,20 +32,23 @@
             </div>
 
             <div class="preview"> <a href="/src/DiurnalCircles.html">
-                <img src="/assets/sketch-preview/DiurnalCircles.png" width="165px" height="165px" /> <br />
-                Diurnal circles
+                <img src="/assets/sketch-preview/DiurnalCircles.png"  /> <br />
+                DiurnalCircles
             </a> </div> <div class="preview"> <a href="/src/SpiralBlocks.html">
-                <img src="/assets/sketch-preview/SpiralBlocks.png" width="165px" height="165px" /> <br />
-                Spiral blocks
+                <img src="/assets/sketch-preview/SpiralBlocks.png" /> <br />
+                SpiralBlocks
             </a> </div> <div class="preview"> <a href="/src/Present.html">
-                <img src="/assets/sketch-preview/Present.png" width="165px" height="165px" /> <br />
+                <img src="/assets/sketch-preview/Present.png" /> <br />
                 Present
             </a> </div> <div class="preview"> <a href="/src/Triangle.html">
-                <img src="/assets/sketch-preview/Triangle.png" width="165px" height="165px" /> <br />
+                <img src="/assets/sketch-preview/Triangle.png" /> <br />
                 Triangle
             </a> </div> <div class="preview"> <a href="/src/Group.html">
-                <img style="background: #607D8B" src="/assets/sketch-preview/Group.png" width="165px" height="165px" /> <br />
+                <img src="/assets/sketch-preview/Group.png" style="background: #607D8B" /> <br />
                 Group
+            </a> </div> <div class="preview"> <a href="/src/MinecraftTime.html">
+                <img src="/assets/sketch-preview/MinecraftTime.png" /> <br />
+                MinecraftTime
             </a> </div>
         </div>
     </body>
