@@ -3,6 +3,15 @@
     <head>
         <meta charset="utf-8"> <title>Group</title>
         <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+        <style media="screen">
+            html, body {
+                background: #607D8B;
+            }
+
+            div, a {
+                color: #37474F; text-shadow: none; font-weight: bold;
+            }
+        </style>
     </head>
     <body>
         <div id="container"></div>
@@ -12,17 +21,17 @@
         <script src="/src/js/Point.js"></script>
 
         <script type="text/javascript">
+            const COUNT = 5;
+
             var points = [];
             var gap = 0;
 
-            var tick = 0;
-
             var sketch = Sketch.create({
-                container: document.getElementById("container")
+                container: document.getElementById("container"), autopause: false
             });
 
             sketch.setup = sketch.resize = function(){
-                gap = min(sketch.width, sketch.height) / 30;
+                gap = min(sketch.width, sketch.height) / 25;
             };
 
             sketch.click = function(){
@@ -30,11 +39,12 @@
             };
 
             sketch.update = function(){
-                if(random(4) > 1) points.push(new Point(random(sketch.width), random(sketch.height)));
+                if(random(4) > 1) for(var O_= 0; O_< random(1, 3); O_++) points.push(new Point(random(sketch.width), random(sketch.height)));
             }
 
             sketch.draw = function(){
                 var taken = [];
+                var circles = [];
 
                 for(var i = 0; i < points.length; i++){
                     var point = points[i];
@@ -47,13 +57,8 @@
                         }
                     }
 
-                    if(neighbors.length == 5){
-                        sketch.strokeStyle = "#00FF00";
-                        sketch.lineWidth = 1;
-
-                        sketch.beginPath();
-                        sketch.arc(point.x, point.y, gap, 0, TWO_PI);
-                        sketch.stroke();
+                    if(neighbors.length === COUNT){
+                        circles.push(point);
 
                         neighbors.forEach(function(n){
                             if(taken.indexOf(n) === -1){
@@ -62,23 +67,28 @@
                         });
                     }
 
-                    sketch.fillStyle = "#FFFFFF";
+                    sketch.fillStyle = neighbors.length >= COUNT ? (neighbors.length === COUNT ? "#37474F" : "#546E7A") : "#FFFFFF";
 
                     sketch.beginPath();
-                    sketch.arc(point.x, point.y, 3, 0, TWO_PI);
+                    sketch.arc(point.x, point.y, gap / 12, 0, TWO_PI);
                     sketch.fill();
                 }
 
-                Array.prototype.push.apply(totalTaken, taken);
+                sketch.strokeStyle = "#37474F";
+                sketch.lineWidth = gap / 20;
 
-                sketch.strokeStyle = "#440000";
+                circles.forEach(function(point){
+                    sketch.beginPath();
+                    sketch.arc(point.x, point.y, gap, 0, TWO_PI);
+                    sketch.stroke();
+                });
+
+                /*sketch.strokeStyle = "#440000";
                 sketch.lineWidth = 1;
 
                 sketch.beginPath();
                 sketch.arc(sketch.mouse.x, sketch.mouse.y, gap, 0, TWO_PI);
-                sketch.stroke();
-
-                tick++;
+                sketch.stroke();*/
             }
         </script>
     </body>
