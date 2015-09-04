@@ -128,7 +128,7 @@
             }
 
             sketch.setup = function(){
-                blockSize = floor(min(sketch.width, sketch.height) / 25);
+                blockSize = floor(min(sketch.width, sketch.height) / 33);
 
                 blocks = new Array(floor(sketch.width / blockSize));
                 for(var i = 0; i < blocks.length; i++){
@@ -235,9 +235,11 @@
                                 }
                             }
 
-                            sketch.font = (blockSize * 0.1) + "px Consolas"
-                            sketch.fillStyle = area.debuff && area.debuff > 0 ? "red" : "black";
-                            sketch.fillText(area.power, (area.x + 0.1) * blockSize, (area.y + 0.4) * blockSize);
+                            if(<?php echo (isset($_GET["hidetext"]) and $_GET["hidetext"] === "true") ? "false" : "true"; ?>){
+                                sketch.font = (blockSize * 0.1) + "px Consolas"
+                                sketch.fillStyle = area.debuff && area.debuff > 0 ? "red" : "black";
+                                sketch.fillText(area.power, (area.x + 0.1) * blockSize, (area.y + 0.4) * blockSize);
+                            }
                         }
                     }
                 }
