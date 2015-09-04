@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"> <title>Spread</title>
+        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+    </head>
+    <body>
+        <div id="container"></div>
+        <a class="info" href="/">Developed by @ChalkPE</a>
+
+        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script type="text/javascript">
+            var Direction = {
+                UP: 0,
+                RIGHT: 1,
+                DOWN: 2,
+                LEFT: 3
+            };
+
+            function Area(x, y, param){
+                this.x = x;
+                this.y = y;
+
+                this.type = param.type || "nothing";
+                this.power = param.power || 20;
+            }
+
+            Area.prototype = {
+                getSide: function(direction){
+                    switch(direction){
+                        case Direction.UP:    return blocks[this.x][this.y - 1];
+                        case Direction.RIGHT: return blocks[this.x + 1][this.y];
+                        case Direction.DOWN:  return blocks[this.x][this.y + 1];
+                        case Direction.LEFT:  return blocks[this.x - 1][this.y];
+                    }
+                },
+
+                canGoTo: function(direction){
+                    switch(direction){
+                        case Direction.UP:    return 0 < this.y;
+                        case Direction.RIGHT: return (this.x + 1) < blocks.length;
+                        case Direction.DOWN:  return (this.y + 1) < blocks[this.x].length;
+                        case Direction.LEFT:  return 0 < this.x;
+                    }
+                },
+
+                extendTo: function(direction){
+                    if(!this.canGoTo(direction)) return;
+                    if(this.power <= 50) return;
+
+                    var block = this.getSide(direction);
+
+                    if(block.type === "null"){
+                        if(this.power > 300){
+                            block.type = this.type;
+                            block.power = 10;
+
+                            this.power -= 300;
+                        }
+                        return;
+                    }
+
+                    if(this.power <= block.power) return;
+
+                    if(this.type === block.type){
+                        if(abs(this.power - block.power) >= 250) this.power = block.power = floor((this.power + block.power) / 2);
+                        return;
+                    }
+
+                    block.type = this.type;
+
+                    this.power -= 40;
+                    block.power = ceil(0.6 * block.power);
+                },
+
+                drawSideLine: function(direction){
+                    sketch.strokeStyle = "black";
+                    sketch.lineWidth = blockSize * 0.05;
+
+                    sketch.beginPath();
+
+                    switch(direction){
+                        case Direction.UP:
+                            sketch.moveTo(this.x * blockSize, this.y * blockSize);
+                            sketch.lineTo((this.x + 1) * blockSize, this.y * blockSize);
+                            break;
+
+                        case Direction.RIGHT:
+                            sketch.moveTo((this.x + 1) * blockSize, this.y * blockSize);
+                            sketch.lineTo((this.x + 1) * blockSize, (this.y + 1) * blockSize);
+                            break;
+
+                        case Direction.DOWN:
+                            sketch.moveTo(this.x * blockSize, (this.y + 1) * blockSize);
+                            sketch.lineTo((this.x + 1) * blockSize, (this.y + 1) * blockSize);
+                            break;
+
+                        case Direction.LEFT:
+                            sketch.moveTo(this.x * blockSize, this.y * blockSize);
+                            sketch.lineTo(this.x * blockSize, (this.y + 1) * blockSize);
+                            break;
+                    }
+                    sketch.stroke();
+                }
+            };
+
+            var blockSize;
+            var blocks;
+
+            var finalType = null;
+            var cooltime = 30;
+
+            var sketch = Sketch.create({
+                container: document.getElementById("container"), autopause: false
+            });
+
+            var COLOURS = [/*'#69D2E7', */'#A7DBD8', '#E0E4CC',/* '#F38630', '#FA6900',*/ '#FF4E50', '#F9D423'];
+
+            function randomColor(start, end){
+                start = max(0, start);
+                end = min(256, end);
+
+                return ("rgb(" + floor(random(start, end)) + "," + floor(random(start, end)) + "," + floor(random(start, end)) + ")");
+            }
+
+            function randomAAAColor(){
+                return "rgb(" + (128 * floor(random(1, 3))) + ", " + (128 * floor(random(2))) + ", " + (128 * floor(random(2))) + ")";
+            }
+
+            sketch.setup = function(){
+                blockSize = floor(min(sketch.width, sketch.height) / 25);
+
+                blocks = new Array(floor(sketch.width / blockSize));
+                for(var i = 0; i < blocks.length; i++){
+                    blocks[i] = new Array(floor(sketch.height / blockSize));
+                    for(var j = 0; j < blocks[i].length; j++){
+                        blocks[i][j] = new Area(i, j, {
+                            type: (random(100) > 20) ? "null" : randomColor(128, 256)
+                        });
+                    }
+                }
+            };
+
+            sketch.update = function(){
+                if(cooltime > 0 && --cooltime > 0) return;
+
+                var type = null;
+
+                for(var x = 0; x < blocks.length; x++){
+                    for(var y = 0; y < blocks[x].length; y++){
+                        var area = blocks[x][y];
+                        if(area.type !== "null"){
+
+                            if(area.debuff && area.debuff > 0 && --area.debuff > 0){
+                                area.power -= floor(random(50, 350));
+                                if(area.power <= 0){
+                                    area.type = "null";
+                                    area.power = 0;
+                                    area.debuff = floor(area.debuff * 0.5);
+
+                                    continue;
+                                }
+                            }
+
+                            if(random(10) < 5) area.power += floor(random(5, 30));
+                            if(random(10) < 9) area.extendTo(floor(random(4)));
+
+                            if(<?php echo (isset($_GET["disaster"]) and $_GET["disaster"] === "true") ? "true" : "false"; ?>){
+                                if(random(1000) < 2 && area.power > 2500){
+                                    var width = floor(random(2, 4)), height = floor(random(2, 4));
+
+                                    for(var i = -width; i <= width; i++){
+                                        if((x + i) < 0 || (x + i) >= blocks.length) continue;
+
+                                        for(var j = -height; j <= height; j++){
+                                            if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
+
+                                            var sideBlock = blocks[x + i][y + j];
+                                            if(sideBlock.type !== "null") sideBlock.debuff = (sideBlock.debuff && sideBlock.debuff > 0 ? sideBlock.debuff : 0) + floor(random(300, 1000));
+                                        }
+                                    }
+                                }
+
+                                if(random(1000) < 1.5 && area.power > 1500){
+                                    var width = floor(random(0, 1)), height = floor(random(0, 1));
+                                    //var newType = randomColor(128, 256);
+
+                                    for(var i = -width; i <= width; i++){
+                                        if((x + i) < 0 || (x + i) >= blocks.length) continue;
+
+                                        for(var j = -height; j <= height; j++){
+                                            if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
+
+                                            var sideBlock = blocks[x + i][y + j];
+                                            sideBlock.type = randomAAAColor();
+                                            sideBlock.power += floor(random(-200, 700));
+                                        }
+                                    }
+                                }
+                            }
+
+                            if(type !== "not yet"){
+                                if(type === null) type = area.type;
+                                else if(type !== area.type) type = "not yet";
+                            }
+                        }
+                    }
+                }
+
+                if(type !== "not yet"){
+                    finalType = type;
+                }
+            }
+
+            sketch.draw = function(){
+                if(finalType !== null){
+                    sketch.fillStyle = finalType;
+                    sketch.fillRect(0, 0, sketch.width, sketch.height);
+
+                    sketch.pause();
+                    return;
+                }
+
+                for(var x = 0; x < blocks.length; x++){
+                    for(var y = 0; y < blocks[x].length; y++){
+                        var area = blocks[x][y];
+                        if(area.type !== "null" && area.power > 0){
+                            sketch.fillStyle = area.type;
+                            sketch.fillRect(area.x * blockSize, area.y * blockSize, blockSize, blockSize);
+
+                            for(var d = 0; d < 4; d++){
+                                if(area.canGoTo(d)){
+                                    var side = area.getSide(d);
+                                    if( area.type !== side.type) area.drawSideLine(d);
+                                }
+                            }
+
+                            sketch.font = (blockSize * 0.1) + "px Consolas"
+                            sketch.fillStyle = area.debuff && area.debuff > 0 ? "red" : "black";
+                            sketch.fillText(area.power, (area.x + 0.1) * blockSize, (area.y + 0.4) * blockSize);
+                        }
+                    }
+                }
+            };
+
+            sketch.click = function(){
+                var x = floor(sketch.mouse.x / blockSize);
+                var y = floor(sketch.mouse.y / blockSize);
+
+                if(blocks.length <= x || blocks[x].length <= y) return;
+
+                var area = blocks[x][y];
+                if(area.type !== null){
+                    var width = floor(random(0, 2)), height = floor(random(0, 2));
+
+                    for(var i = -width; i <= width; i++){
+                        if((x + i) < 0 || (x + i) >= blocks.length) continue;
+
+                        for(var j = -height; j <= height; j++){
+                            if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
+
+                            var sideBlock = blocks[x + i][y + j];
+                            sideBlock.power += 1500;
+                        }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
