@@ -81,23 +81,23 @@
 
                     switch(direction){
                         case Direction.UP:
-                            sketch.moveTo(this.x * blockSize, this.y * blockSize);
-                            sketch.lineTo((this.x + 1) * blockSize, this.y * blockSize);
+                            sketch.moveTo(leftPadding + this.x * blockSize, topPadding + this.y * blockSize);
+                            sketch.lineTo(leftPadding + (this.x + 1) * blockSize, topPadding + this.y * blockSize);
                             break;
 
                         case Direction.RIGHT:
-                            sketch.moveTo((this.x + 1) * blockSize, this.y * blockSize);
-                            sketch.lineTo((this.x + 1) * blockSize, (this.y + 1) * blockSize);
+                            sketch.moveTo(leftPadding + (this.x + 1) * blockSize, topPadding + this.y * blockSize);
+                            sketch.lineTo(leftPadding + (this.x + 1) * blockSize, topPadding + (this.y + 1) * blockSize);
                             break;
 
                         case Direction.DOWN:
-                            sketch.moveTo(this.x * blockSize, (this.y + 1) * blockSize);
-                            sketch.lineTo((this.x + 1) * blockSize, (this.y + 1) * blockSize);
+                            sketch.moveTo(leftPadding + this.x * blockSize, topPadding + (this.y + 1) * blockSize);
+                            sketch.lineTo(leftPadding + (this.x + 1) * blockSize, topPadding + (this.y + 1) * blockSize);
                             break;
 
                         case Direction.LEFT:
-                            sketch.moveTo(this.x * blockSize, this.y * blockSize);
-                            sketch.lineTo(this.x * blockSize, (this.y + 1) * blockSize);
+                            sketch.moveTo(leftPadding + this.x * blockSize, topPadding + this.y * blockSize);
+                            sketch.lineTo(leftPadding + this.x * blockSize, topPadding + (this.y + 1) * blockSize);
                             break;
                     }
                     sketch.stroke();
@@ -107,11 +107,13 @@
             var blockSize;
             var blocks;
 
+            var leftPadding, topPadding;
+
             var finalType = null;
-            var cooltime = 30;
+            var cooltime = 10;
 
             var sketch = Sketch.create({
-                container: document.getElementById("container"), autopause: false
+                container: document.getElementById("container"), autopause: false, interval: <?php echo is_numeric($_GET["interval"]) ? $_GET["interval"] : "25"; ?>
             });
 
             var COLOURS = [/*'#69D2E7', */'#A7DBD8', '#E0E4CC',/* '#F38630', '#FA6900',*/ '#FF4E50', '#F9D423'];
@@ -128,11 +130,17 @@
             }
 
             sketch.setup = function(){
-                blockSize = floor(min(sketch.width, sketch.height) / 33);
+                blockSize = floor(max(sketch.width, sketch.height) / 33);
 
-                blocks = new Array(floor(sketch.width / blockSize));
+                var width = floor(sketch.width / blockSize);
+                var height = floor(sketch.height / blockSize);
+
+                leftPadding = round((sketch.width - blockSize * width) / 2);
+                topPadding = round((sketch.height - blockSize * height) / 2);
+
+                blocks = new Array(width);
                 for(var i = 0; i < blocks.length; i++){
-                    blocks[i] = new Array(floor(sketch.height / blockSize));
+                    blocks[i] = new Array(height);
                     for(var j = 0; j < blocks[i].length; j++){
                         blocks[i][j] = new Area(i, j, {
                             type: (random(100) > 20) ? "null" : randomColor(128, 256)
@@ -162,7 +170,7 @@
                                 }
                             }
 
-                            if(random(10) < 5) area.power += floor(random(5, 30));
+                            if(random(10) < 5) area.power = min(99999, area.power + floor(random(5, 30)));
                             if(random(10) < 9) area.extendTo(floor(random(4)));
 
                             if(<?php echo (isset($_GET["disaster"]) and $_GET["disaster"] === "true") ? "true" : "false"; ?>){
@@ -180,9 +188,11 @@
                                         }
                                     }
                                 }
+                            }
 
+                            if(<?php echo (isset($_GET["rebellion"]) and $_GET["rebellion"] === "true") ? "true" : "false"; ?>){
                                 if(random(1000) < 1.5 && area.power > 1500){
-                                    var width = floor(random(0, 1)), height = floor(random(0, 1));
+                                    var width = floor(random(1, 2)), height = floor(random(1, 2));
                                     //var newType = randomColor(128, 256);
 
                                     for(var i = -width; i <= width; i++){
@@ -193,7 +203,7 @@
 
                                             var sideBlock = blocks[x + i][y + j];
                                             sideBlock.type = randomAAAColor();
-                                            sideBlock.power += floor(random(-200, 700));
+                                            sideBlock.power += floor(random(500, 3000));
                                         }
                                     }
                                 }
@@ -226,7 +236,7 @@
                         var area = blocks[x][y];
                         if(area.type !== "null" && area.power > 0){
                             sketch.fillStyle = area.type;
-                            sketch.fillRect(area.x * blockSize, area.y * blockSize, blockSize, blockSize);
+                            sketch.fillRect(leftPadding + area.x * blockSize, topPadding + area.y * blockSize, blockSize, blockSize);
 
                             for(var d = 0; d < 4; d++){
                                 if(area.canGoTo(d)){
@@ -235,19 +245,38 @@
                                 }
                             }
 
-                            if(<?php echo (isset($_GET["hidetext"]) and $_GET["hidetext"] === "true") ? "false" : "true"; ?>){
-                                sketch.font = (blockSize * 0.1) + "px Consolas"
-                                sketch.fillStyle = area.debuff && area.debuff > 0 ? "red" : "black";
-                                sketch.fillText(area.power, (area.x + 0.1) * blockSize, (area.y + 0.4) * blockSize);
+                            var debuff = area.debuff && area.debuff > 0;
+                            if(<?php echo (isset($_GET["showtext"]) and $_GET["showtext"] === "true") ? "true" : "false"; ?> || debuff){
+                                sketch.textAlign = "center";
+                                sketch.textBaseline = "middle";
+                                sketch.font = (blockSize * 0.1) + "px Consolas";
+
+                                sketch.fillStyle = debuff ? "red" : "black";
+                                sketch.fillText(area.power, leftPadding + (area.x + 0.5) * blockSize, topPadding + (area.y + 0.5) * blockSize);
                             }
                         }
                     }
                 }
+
+                if(cooltime > 0){
+                    sketch.textAlign = "center";
+                    sketch.textBaseline = "middle";
+                    sketch.font = (blockSize * 8) + "px Quantico";
+
+                    sketch.lineWidth = 10;
+
+                    sketch.strokeStyle = "#222222";
+                    sketch.strokeText(cooltime, sketch.width / 2, sketch.height / 2);
+
+                    sketch.fillStyle = "#E0E4CC";
+                    sketch.fillText(cooltime, sketch.width / 2, sketch.height / 2);
+
+                }
             };
 
             sketch.click = function(){
-                var x = floor(sketch.mouse.x / blockSize);
-                var y = floor(sketch.mouse.y / blockSize);
+                var x = leftPadding + floor(sketch.mouse.x / blockSize);
+                var y = topPadding + floor(sketch.mouse.y / blockSize);
 
                 if(blocks.length <= x || blocks[x].length <= y) return;
 
@@ -262,7 +291,7 @@
                             if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
 
                             var sideBlock = blocks[x + i][y + j];
-                            sideBlock.power += 1500;
+                            if(sideBlock.type === area.type) sideBlock.power += 1500;
                         }
                     }
                 }
