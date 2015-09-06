@@ -113,7 +113,8 @@
             var cooltime = 10;
 
             var sketch = Sketch.create({
-                container: document.getElementById("container"), autopause: false, interval: <?php echo is_numeric($_GET["interval"]) ? $_GET["interval"] : "25"; ?>
+                container: document.getElementById("container"), autopause: false,
+                interval: <?= (isset($_GET["interval"]) and is_numeric($_GET["interval"])) ? $_GET["interval"] : "25"; ?>
             });
 
             var COLOURS = [/*'#69D2E7', */'#A7DBD8', '#E0E4CC',/* '#F38630', '#FA6900',*/ '#FF4E50', '#F9D423'];

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8"> <title>Spiral blocks</title>
+        <meta charset="utf-8"> <title>SpiralBlocks</title>
         <link rel="stylesheet" type="text/css" href="css/style.css" />
     </head>
     <body>
@@ -26,17 +26,18 @@
             var isClockwise = true;
 
             var sketch = Sketch.create({
-                container: document.getElementById("container"), autoclear: false, interval: <?php echo is_numeric($_GET["interval"]) ? $_GET["interval"] : "1" ?>
+                container: document.getElementById("container"), autoclear: false,
+                interval: <?= (isset($_GET["interval"]) and is_numeric($_GET["interval"])) ? $_GET["interval"] : "1" ?>
             });
 
             sketch.setup = function(){
                 blocks = {};
-                BLOCK_SIZE = min(sketch.width, sketch.height) / <?php echo is_numeric($_GET["count"]) ? $_GET["count"] : "25" ?>;
+                BLOCK_SIZE = min(sketch.width, sketch.height) / <?= (isset($_GET["count"]) and is_numeric($_GET["count"])) ? $_GET["count"] : "25" ?>;
 
                 last.x = floor(sketch.width / BLOCK_SIZE / 2);
                 last.y = floor(sketch.height / BLOCK_SIZE / 2);
                 last.direction = Direction.RIGHT;
-
+                
                 sketch.setBlock(last.x, last.y, isClockwise ? "#E0E4CC" : "#222222");
             };
 
