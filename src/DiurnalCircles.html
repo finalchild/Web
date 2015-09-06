@@ -6,11 +6,11 @@
     </head>
     <body>
         <div id="container"></div>
-        <a class="info" href="..">Developed by @ChalkPE<?php if(isset($_GET["mcpe"]) and $_GET["mcpe"] === "korea") echo " - Hello, M.K user!"; ?></a>
+        <a class="info" href="..">Developed by @ChalkPE<?= (isset($_GET["mcpe"]) and $_GET["mcpe"] === "korea") ? " - Hello, M.K user!" : ""; ?></a>
 
         <script src="../libs/sketch.js/js/sketch.js"></script>
         <script type="text/javascript">
-            const CIRCLE_WIDTH = <?php echo is_numeric($_GET["width"]) ? $_GET["width"] : "6" ?>;
+            const CIRCLE_WIDTH = <?= (isset($_GET["width"]) and is_numeric($_GET["width"])) ? $_GET["width"] : "6" ?>;
             const TICK = CIRCLE_WIDTH;
 
             function DiurnalCircle(){
@@ -41,15 +41,15 @@
                 draw: function(context){
                     context.lineCap = "round";
                     context.lineWidth = CIRCLE_WIDTH;
-                    context.<?php echo isset($_GET["style"]) ? $_GET["style"] : "stroke" ?>Style = this.color;
+                    context.<?= isset($_GET["style"]) ? $_GET["style"] : "stroke" ?>Style = this.color;
 
-                    var angle = this.angle * this.speed / <?php echo is_numeric($_GET["slowness"]) ? $_GET["slowness"] : "100" ?>;
+                    var angle = this.angle * this.speed / <?= (isset($_GET["slowness"]) and is_numeric($_GET["slowness"])) ? $_GET["slowness"] : "100" ?>;
                     var startAngle = (angle + this.startAngle) / 180 * PI;
                     var endAngle = (angle + this.endAngle) / 180 * PI;
 
                     context.beginPath();
                     context.arc(sketch.width * 0.5, sketch.height * 0.5, this.radius * 0.5, startAngle, endAngle);
-                    context.<?php echo isset($_GET["style"]) ? $_GET["style"] : "stroke" ?>();
+                    context.<?= isset($_GET["style"]) ? $_GET["style"] : "stroke" ?>();
                 }
             };
 
@@ -58,7 +58,9 @@
 
             var sketch = Sketch.create({
                 container: document.getElementById("container"),
-                interval: <?php echo is_numeric($_GET["interval"]) ? $_GET["interval"] : "5" ?>, autopause: false, autoclear: <?php echo isset($_GET["autoclear"]) ? $_GET["autoclear"] : "true" ?>
+                interval:  <?= (isset($_GET["interval"]) and is_numeric($_GET["interval"])) ? $_GET["interval"] : "5" ?>,
+                autoclear: <?= isset($_GET["autoclear"]) ? $_GET["autoclear"] : "true" ?>,
+                autopause: false
             });
 
             sketch.update = function(){
