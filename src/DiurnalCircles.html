@@ -6,7 +6,7 @@
     </head>
     <body>
         <div id="container"></div>
-        <a class="info" href="..">Developed by @ChalkPE<?php if($_GET["mcpe"] === "korea") echo " - Hello, M.K user!"; ?></a>
+        <a class="info" href="..">Developed by @ChalkPE<?php if(isset($_GET["mcpe"]) and $_GET["mcpe"] === "korea") echo " - Hello, M.K user!"; ?></a>
 
         <script src="../libs/sketch.js/js/sketch.js"></script>
         <script type="text/javascript">
