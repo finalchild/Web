@@ -2,13 +2,13 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"> <title>Diurnal circles</title>
-        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
     </head>
     <body>
         <div id="container"></div>
-        <a class="info" href="/">Developed by @ChalkPE<?php if($_GET["mcpe"] === "korea") echo " - Hello, M.K user!"; ?></a>
+        <a class="info" href="..">Developed by @ChalkPE<?php if($_GET["mcpe"] === "korea") echo " - Hello, M.K user!"; ?></a>
 
-        <script src="/libs/sketch.js/js/sketch.js"></script>
+        <script src="../libs/sketch.js/js/sketch.js"></script>
         <script type="text/javascript">
             const CIRCLE_WIDTH = <?php echo is_numeric($_GET["width"]) ? $_GET["width"] : "6" ?>;
             const TICK = CIRCLE_WIDTH;

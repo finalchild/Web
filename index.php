@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"> <title>ChalkPE</title>
-        <link rel="stylesheet" type="text/css" href="/src/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="src/css/style.css" />
         <style media="screen">
             html, body {
                 overflow: auto;
@@ -85,7 +85,7 @@
                     var name = $(this).attr("name");
                     var style = $(this).is("[bgcolor]") ? " style=\"background: " + $(this).attr("bgcolor") + "\"" : "";
 
-                    $(this).append("<a href=\"/src/" + name + ".html\"><img src=\"/assets/sketch-preview/" + name + ".png\" " + style + " /><br />" + name + "</a>");
+                    $(this).append("<a href=\"src/" + name + ".html\"><img src=\"assets/sketch-preview/" + name + ".png\" " + style + " /><br />" + name + "</a>");
                 });
             });
         </script>
