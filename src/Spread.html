@@ -152,7 +152,7 @@
             sketch.update = function(){
                 if(cooltime > 0 && --cooltime > 0) return;
 
-                var type = null;
+                var currentType = null;
 
                 for(var x = 0; x < blocks.length; x++){
                     for(var y = 0; y < blocks[x].length; y++){
@@ -209,16 +209,16 @@
                                 }
                             }
 
-                            if(type !== "not yet"){
-                                if(type === null) type = area.type;
-                                else if(type !== area.type) type = "not yet";
+                            if(currentType !== "not yet"){
+                                if(currentType === null) currentType = area.type;
+                                else if(currentType !== area.type) currentType = "not yet";
                             }
                         }
                     }
                 }
 
-                if(type !== "not yet"){
-                    finalType = type;
+                if(currentType !== "not yet"){
+                    finalType = currentType;
                 }
             }
 
@@ -275,13 +275,13 @@
             };
 
             sketch.click = function(){
-                var x = leftPadding + floor(sketch.mouse.x / blockSize);
-                var y = topPadding + floor(sketch.mouse.y / blockSize);
+                var x = floor((sketch.mouse.x - leftPadding) / blockSize);
+                var y = floor((sketch.mouse.y - topPadding) / blockSize);
 
                 if(blocks.length <= x || blocks[x].length <= y) return;
 
                 var area = blocks[x][y];
-                if(area.type !== null){
+                if(area.type !== "null"){
                     var width = floor(random(0, 2)), height = floor(random(0, 2));
 
                     for(var i = -width; i <= width; i++){
