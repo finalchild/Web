@@ -131,7 +131,7 @@
             }
 
             sketch.setup = function(){
-                blockSize = floor(max(sketch.width, sketch.height) / 35);
+                blockSize = floor(min(sketch.width, sketch.height) / 35);
 
                 var width = floor(sketch.width / blockSize);
                 var height = floor(sketch.height / blockSize);
@@ -209,11 +209,11 @@
                                     }
                                 }
                             }
+                        }
 
-                            if(currentType !== "not yet"){
-                                if(currentType === null) currentType = area.type;
-                                else if(currentType !== area.type) currentType = "not yet";
-                            }
+                        if(currentType !== "not yet"){
+                            if(currentType === null) currentType = area.type;
+                            else if(currentType !== area.type) currentType = "not yet";
                         }
                     }
                 }
@@ -292,7 +292,7 @@
                             if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
 
                             var sideBlock = blocks[x + i][y + j];
-                            if(sideBlock.type === area.type) sideBlock.power += 1500;
+                            if(sideBlock.type === area.type) sideBlock.power += 1000;
                         }
                     }
                 }
