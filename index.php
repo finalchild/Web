@@ -8,51 +8,86 @@
                 overflow: auto;
             }
 
-            .preview {
-                display: inline-block;
-                vertical-align: middle;
-                margin-right: 32px;
-                margin-bottom: 32px;
+            body {
+                margin: 50px;
+                text-align: center;
             }
 
-            .preview img {
+            .title {
+                margin-bottom: 32px
+            }
+
+            .title a {
+                font-size: 80px;
+            }
+
+            .sketch-wrapper {
+                display: inline-block;
+                background: #303030;
+            }
+
+            .sketch-title {
+                text-align: left;
+                font-size: 25px;
+
+                padding: 8px;
+                padding-left: 16px;
+
+                background: #393939;
+            }
+
+            .sketch-content {
+                margin-bottom: 16px;
+
+                padding-left: 32px;
+                padding-right: 32px;
+            }
+
+            .sketch {
+                display: inline-block;
+                vertical-align: middle;
+
+                margin-top: 32px;
+            }
+
+            .sketch + .sketch {
+                margin-left: 32px;
+            }
+
+            .sketch img {
+                background: #222222;
                 width: 165px; height: 165px;
             }
         </style>
     </head>
     <body>
-        <div style='margin-top: 50px; text-align: center'>
-            <div style="margin-bottom: 48px">
-                <a class="title" href="http://chalk.pe">
-                    <?php
-                        if(isset($_GET["name"])) echo "<span style=\"font-family: 'Nanum Pen Script'\">" . $_GET["name"] . "님 안녕!</span>";
-                        else echo "@ChalkPE";
-                    ?>
-                </a>
-            </div>
-
-            <div class="preview"> <a href="/src/DiurnalCircles.html">
-                <img src="/assets/sketch-preview/DiurnalCircles.png"  /> <br />
-                DiurnalCircles
-            </a> </div> <div class="preview"> <a href="/src/SpiralBlocks.html">
-                <img src="/assets/sketch-preview/SpiralBlocks.png" /> <br />
-                SpiralBlocks
-            </a> </div> <div class="preview"> <a href="/src/Present.html">
-                <img src="/assets/sketch-preview/Present.png" /> <br />
-                Present
-            </a> </div> <div class="preview"> <a href="/src/Triangle.html">
-                <img src="/assets/sketch-preview/Triangle.png" /> <br />
-                Triangle
-            </a> </div> <div class="preview"> <a href="/src/Group.html">
-                <img src="/assets/sketch-preview/Group.png" style="background: #607D8B" /> <br />
-                Group
-            </a> </div> <div class="preview"> <a href="/src/MinecraftTime.html">
-                <img src="/assets/sketch-preview/MinecraftTime.png" /> <br />
-                MinecraftTime
-            </a> </div> <div class="preview"> <a href="/src/Spread.html">
-                <img src="/assets/sketch-preview/Spread.png" /> <br />
-                Spread
-            </a> </div>
+        <div class="title">
+            <a href="http://chalk.pe"><?= isset($_GET["name"]) ? "<span style=\"font-family: 'Nanum Pen Script'\">" . $_GET["name"] . "님 안녕!</span>" : "@ChalkPE" ?></a>
         </div>
+
+        <div class="sketch-wrapper">
+            <div class="sketch-title">Sketches</div>
+            <div class="sketch-content">
+                <div class="sketch" name="DiurnalCircles"></div>
+                <div class="sketch" name="SpiralBlocks"></div>
+                <div class="sketch" name="Present"></div>
+                <div class="sketch" name="Triangle"></div>
+                <div class="sketch" name="Group" bgcolor="#607D8B"></div>
+                <div class="sketch" name="MinecraftTime"></div>
+                <div class="sketch" name="Spread"></div>
+            </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $(".sketch").each(function(){
+                    var name = $(this).attr("name");
+                    var style = $(this).is("[bgcolor]") ? " style=\"background: " + $(this).attr("bgcolor") + "\"" : "";
+
+                    $(this).append("<a href=\"/src/" + name + ".html\"><img src=\"/assets/sketch-preview/" + name + ".png\" " + style + " /><br />" + name + "</a>");
+                });
+            });
+        </script>
     </body>
 </html>

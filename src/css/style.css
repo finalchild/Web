@@ -11,10 +11,6 @@ div, a {
     font-family: 'Quantico'; font-size: 16px; color: #E0E4CC; text-shadow: 3px 3px 3px #111111; text-decoration: none;
 }
 
-.title {
-	font-size: 80px;
-}
-
 .info {
     position: absolute; bottom: 10px; left: 10px;
 }
