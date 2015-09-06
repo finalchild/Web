@@ -14,7 +14,7 @@
             }
 
             .title {
-                margin-bottom: 32px
+                margin-bottom: 50px
             }
 
             .title a {
@@ -33,7 +33,7 @@
                 padding: 8px;
                 padding-left: 16px;
 
-                background: #393939;
+                background: #383838;
             }
 
             .sketch-content {
