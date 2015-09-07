@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8"> <title>SpiralBlocks</title>
+        <meta charset="utf-8" /> <title>SpiralBlocks</title>
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no" />
+
+        <meta property="og:title" content="SpiralBlocks" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="../assets/profile.png" />
+        <meta property="og:description" content="The useless website" />
+
+        <link rel="icon" type="image/png" href="../assets/favicon.png" />
         <link rel="stylesheet" type="text/css" href="css/style.css" />
     </head>
     <body>
@@ -37,7 +45,7 @@
                 last.x = floor(sketch.width / BLOCK_SIZE / 2);
                 last.y = floor(sketch.height / BLOCK_SIZE / 2);
                 last.direction = Direction.RIGHT;
-                
+
                 sketch.setBlock(last.x, last.y, isClockwise ? "#E0E4CC" : "#222222");
             };
 

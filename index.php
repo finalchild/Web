@@ -2,7 +2,16 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"> <title>ChalkPE</title>
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no" />
+
+        <meta property="og:title" content="ChalkPE" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="assets/profile.png" />
+        <meta property="og:description" content="The useless website" />
+
+        <link rel="icon" type="image/png" href="assets/favicon.png" />
         <link rel="stylesheet" type="text/css" href="src/css/style.css" />
+
         <style media="screen">
             html, body {
                 overflow: auto;
@@ -14,19 +23,16 @@
             }
 
             .title {
-                margin-bottom: 50px
-            }
-
-            .title a {
+                margin-bottom: 50px;
                 font-size: 80px;
             }
 
-            .sketch-wrapper {
+            .box-wrapper {
                 display: inline-block;
                 background: #303030;
             }
 
-            .sketch-title {
+            .box-title {
                 text-align: left;
                 font-size: 25px;
 
@@ -36,7 +42,7 @@
                 background: #383838;
             }
 
-            .sketch-content {
+            .box-content {
                 margin-bottom: 16px;
 
                 padding-left: 32px;
@@ -62,12 +68,12 @@
     </head>
     <body>
         <div class="title">
-            <a href="http://chalk.pe"><?= isset($_GET["name"]) ? "<span style=\"font-family: 'Nanum Pen Script'\">" . $_GET["name"] . "님 안녕!</span>" : "@ChalkPE" ?></a>
+            <?= isset($_GET["name"]) ? "<span style=\"font-family: 'Nanum Pen Script'\">" . $_GET["name"] . "님 안녕!</span>" : "@ChalkPE" ?>
         </div>
 
-        <div class="sketch-wrapper">
-            <div class="sketch-title">Sketches</div>
-            <div class="sketch-content">
+        <div class="box-wrapper">
+            <div class="box-title">Sketches</div>
+            <div class="box-content">
                 <div class="sketch" name="DiurnalCircles"></div>
                 <div class="sketch" name="SpiralBlocks"></div>
                 <div class="sketch" name="Present"></div>
