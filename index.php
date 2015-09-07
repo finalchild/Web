@@ -2,7 +2,6 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"> <title>ChalkPE</title>
-        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no" />
 
         <meta property="og:title" content="ChalkPE" />
         <meta property="og:type" content="website" />
