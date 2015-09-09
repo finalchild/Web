@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8"> <title>ChalkPE</title>
-        
+        <meta charset="utf-8" /> <title>ChalkPE</title>
+        <meta name="viewport" content="maximum-scale=1.0, user-scalable=no" />
+
         <meta name="theme-color" content="#222222">
 
         <meta property="og:title" content="ChalkPE" />
