@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"> <title>ChalkPE</title>
+        
+        <meta name="theme-color" content="#222222">
 
         <meta property="og:title" content="ChalkPE" />
         <meta property="og:type" content="website" />
