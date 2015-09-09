@@ -1,5 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Quantico);
 @import url(http://fonts.googleapis.com/css?family=Inconsolata);
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
 @import url(http://fonts.googleapis.com/earlyaccess/nanumpenscript.css);
 
 html, body {
@@ -8,7 +9,7 @@ html, body {
 }
 
 div, a {
-    font-family: 'Quantico'; font-size: 16px; color: #E0E4CC; text-shadow: 3px 3px 3px #111111; text-decoration: none;
+    font-family: 'Quantico', 'Nanum Gothic', serif; font-size: 16px; color: #E0E4CC; text-shadow: 3px 3px 3px #111111; text-decoration: none;
 }
 
 .info {
