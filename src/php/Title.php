@@ -1,7 +1,6 @@
 <?php
-    $name = $_GET["name"];
-    if(isset($name) and strlen($name) > 0 and strip_tags($name) === $name){
-        $name = htmlentities($name, ENT_QUOTES | ENT_HTML5, "UTF-8");
+    if(isset($_GET["name"]) and strlen($_GET["name"]) > 0 and strip_tags($_GET["name"]) === $_GET["name"]){
+        $name = htmlentities($_GET["name"], ENT_QUOTES | ENT_HTML5, "UTF-8");
 
         $scripts = [
             "%s님 안녕!", "%s님, 안녕하세요!", "%s님, 어서 오세요!",
