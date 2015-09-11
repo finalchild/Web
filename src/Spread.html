@@ -72,7 +72,7 @@
 
                     if(this.power <= block.power) return;
 
-                    if(this.type === block.type){
+                    if(getEnemyType(this.type, block.type) !== 2){
                         if(abs(this.power - block.power) >= 250) this.power = block.power = floor((this.power + block.power) / 2);
                         return;
                     }
@@ -83,11 +83,14 @@
                     block.power = ceil(0.6 * block.power);
                 },
 
-                drawSideLine: function(direction){
+                drawSideLine: function(direction, type){
+                    if(type === 0) return;
+
                     sketch.strokeStyle = "black";
                     sketch.lineWidth = blockSize * 0.05;
 
                     sketch.beginPath();
+                    sketch.setLineDash((type === 1) ? [blockSize * 0.15] : []);
 
                     switch(direction){
                         case Direction.UP:
@@ -133,11 +136,24 @@
                 start = max(0, start);
                 end = min(256, end);
 
-                return ("rgb(" + floor(random(start, end)) + "," + floor(random(start, end)) + "," + floor(random(start, end)) + ")");
+                return [floor(random(start, end)), floor(random(start, end)), floor(random(start, end))];
             }
 
-            function randomAAAColor(){
-                return "rgb(" + (128 * floor(random(1, 3))) + ", " + (128 * floor(random(2))) + ", " + (128 * floor(random(2))) + ")";
+            function randomRebellionColor(){
+                return [128 * floor(random(1, 3)), 128 * floor(random(2)), 128 * floor(random(2))];
+            }
+
+            function colorToCode(color){
+                return "rgb(" + color.join(",") + ")";
+            }
+
+            function getEnemyType(colorA, colorB){
+                if(colorA === colorB) return 0; //0: ME
+
+                if(colorA === null || colorB === null) return 2; //2: ENEMY
+
+                var bunsan = (pow(colorA[0] - colorB[0], 2) + pow(colorA[1] - colorB[1], 2) + pow(colorA[2] - colorB[2], 2));
+                return (bunsan < 400) ? 1 : 2; //1: FRIEND
             }
 
             sketch.setup = function(){
@@ -168,8 +184,8 @@
                 for(var x = 0; x < blocks.length; x++){
                     for(var y = 0; y < blocks[x].length; y++){
                         var area = blocks[x][y];
-                        if(area.type !== "null"){
 
+                        if(area.type !== "null"){
                             if(area.debuff && area.debuff > 0 && --area.debuff > 0){
                                 area.power -= floor(random(50, 350));
                                 if(area.power <= 0){
@@ -213,7 +229,7 @@
                                             if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
 
                                             var sideBlock = blocks[x + i][y + j];
-                                            sideBlock.type = randomAAAColor();
+                                            sideBlock.type = randomRebellionColor();
                                             sideBlock.power += floor(random(500, 3000));
                                         }
                                     }
@@ -235,7 +251,7 @@
 
             sketch.draw = function(){
                 if(finalType !== null){
-                    sketch.fillStyle = finalType;
+                    sketch.fillStyle = colorToCode(finalType);
                     sketch.fillRect(0, 0, sketch.width, sketch.height);
 
                     sketch.pause();
@@ -246,13 +262,13 @@
                     for(var y = 0; y < blocks[x].length; y++){
                         var area = blocks[x][y];
                         if(area.type !== "null" && area.power > 0){
-                            sketch.fillStyle = area.type;
+                            sketch.fillStyle = colorToCode(area.type);
                             sketch.fillRect(leftPadding + area.x * blockSize, topPadding + area.y * blockSize, blockSize, blockSize);
 
                             for(var d = 0; d < 4; d++){
                                 if(area.canGoTo(d)){
                                     var side = area.getSide(d);
-                                    if( area.type !== side.type) area.drawSideLine(d);
+                                    area.drawSideLine(d, getEnemyType(area.type, side.type));
                                 }
                             }
 
