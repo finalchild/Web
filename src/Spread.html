@@ -90,7 +90,7 @@
                     sketch.lineWidth = blockSize * 0.05;
 
                     sketch.beginPath();
-                    sketch.setLineDash((type === 1) ? [blockSize * 0.15] : []);
+                    sketch.setLineDash((type === 2) ? [] : [blockSize * 0.17]);
 
                     switch(direction){
                         case Direction.UP:
@@ -150,7 +150,7 @@
             function getEnemyType(colorA, colorB){
                 if(colorA === colorB) return 0; //0: ME
 
-                if(colorA === null || colorB === null) return 2; //2: ENEMY
+                if(colorA === null || colorB === null || <?= (isset($_GET["noalliance"]) and $_GET["noalliance"] === "true") ? "true" : "false"; ?>) return 2; //2: ENEMY
 
                 var bunsan = (pow(colorA[0] - colorB[0], 2) + pow(colorA[1] - colorB[1], 2) + pow(colorA[2] - colorB[2], 2));
                 return (bunsan < 400) ? 1 : 2; //1: FRIEND
