@@ -48,27 +48,21 @@
                 font-size: 25px;
 
                 padding: 8px;
-                padding-left: 16px;
+                padding-left: 0px;
 
                 background: #383838;
             }
 
             .box-content {
-                margin-bottom: 16px;
-
-                padding-left: 32px;
-                padding-right: 32px;
+                padding: 16px;
             }
 
             .sketch {
                 display: inline-block;
                 vertical-align: middle;
 
-                margin-top: 32px;
-            }
-
-            .sketch + .sketch {
-                margin-left: 32px;
+                margin: 16px;
+                margin-bottom: 8px;
             }
 
             .sketch img {
@@ -96,6 +90,10 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script type="text/javascript">
             $(function(){
+                $(".box-title").each(function(){
+                    $(this).html("&nbsp;&nbsp;" + $(this).html());
+                });
+
                 $(".sketch").each(function(){
                     var name = $(this).attr("name");
                     var style = $(this).is("[bgcolor]") ? " style=\"background: " + $(this).attr("bgcolor") + "\"" : "";
