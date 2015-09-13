@@ -27,6 +27,12 @@
                 LEFT: 3
             }; Object.freeze(Direction);
 
+            var EnemyType = {
+                SELF: 0,
+                PARTNER: 1,
+                ENEMY: 2
+            }; Object.freeze(EnemyType);
+
             function Area(x, y, param){
                 this.x = x;
                 this.y = y;
@@ -83,37 +89,44 @@
                     block.power = ceil(0.6 * block.power);
                 },
 
-                drawSideLine: function(direction, type){
-                    if(type === 0) return;
-
-                    sketch.strokeStyle = "black";
-                    sketch.lineWidth = blockSize * 0.05;
-
-                    sketch.beginPath();
-                    sketch.setLineDash((type === 2) ? [] : [blockSize * 0.17]);
+                drawSideLine: function(direction, enemyType){
+                    if(enemyType === EnemyType.SELF) return;
+                    var start, end;
 
                     switch(direction){
                         case Direction.UP:
-                            sketch.moveTo(leftPadding + this.x * blockSize, topPadding + this.y * blockSize);
-                            sketch.lineTo(leftPadding + (this.x + 1) * blockSize, topPadding + this.y * blockSize);
+                            start = [leftPadding +  this.x      * blockSize, topPadding + this.y * blockSize];
+                            end   = [leftPadding + (this.x + 1) * blockSize, topPadding + this.y * blockSize];
                             break;
 
                         case Direction.RIGHT:
-                            sketch.moveTo(leftPadding + (this.x + 1) * blockSize, topPadding + this.y * blockSize);
-                            sketch.lineTo(leftPadding + (this.x + 1) * blockSize, topPadding + (this.y + 1) * blockSize);
+                            start = [leftPadding + (this.x + 1) * blockSize, topPadding +  this.y      * blockSize];
+                            end   = [leftPadding + (this.x + 1) * blockSize, topPadding + (this.y + 1) * blockSize];
                             break;
 
                         case Direction.DOWN:
-                            sketch.moveTo(leftPadding + this.x * blockSize, topPadding + (this.y + 1) * blockSize);
-                            sketch.lineTo(leftPadding + (this.x + 1) * blockSize, topPadding + (this.y + 1) * blockSize);
+                            start = [leftPadding +  this.x      * blockSize, topPadding + (this.y + 1) * blockSize];
+                            end   = [leftPadding + (this.x + 1) * blockSize, topPadding + (this.y + 1) * blockSize];
                             break;
 
                         case Direction.LEFT:
-                            sketch.moveTo(leftPadding + this.x * blockSize, topPadding + this.y * blockSize);
-                            sketch.lineTo(leftPadding + this.x * blockSize, topPadding + (this.y + 1) * blockSize);
+                            start = [leftPadding + this.x * blockSize, topPadding +  this.y      * blockSize];
+                            end   = [leftPadding + this.x * blockSize, topPadding + (this.y + 1) * blockSize];
                             break;
                     }
+
+                    if(enemyType === EnemyType.PARTNER) sketch.setLineDash([blockSize * 0.25]);
+
+                    sketch.strokeStyle =  (enemyType === EnemyType.ENEMY) ? "#222222" : "#555555";
+                    sketch.lineWidth   = ((enemyType === EnemyType.ENEMY) ? 0.075 : 0.05) * blockSize;
+
+                    sketch.beginPath();
+
+                    sketch.moveTo.apply(sketch, start);
+                    sketch.lineTo.apply(sketch, end);
+
                     sketch.stroke();
+                    sketch.setLineDash([]);
                 }
             };
 
@@ -130,30 +143,38 @@
                 interval: <?= (isset($_GET["interval"]) and is_numeric($_GET["interval"])) ? $_GET["interval"] : "10"; ?>
             });
 
-            //var COLOURS = [/*'#69D2E7', */'#A7DBD8', '#E0E4CC',/* '#F38630', '#FA6900',*/ '#FF4E50', '#F9D423'];
-
             function randomColor(start, end){
-                start = max(0, start);
-                end = min(256, end);
+                start = max(0, start || 0);
+                end = min(360, end || 360);
 
-                return [floor(random(start, end)), floor(random(start, end)), floor(random(start, end))];
+                return floor(random(start, end));
             }
 
             function randomRebellionColor(){
-                return [128 * floor(random(1, 3)), 128 * floor(random(2)), 128 * floor(random(2))];
+                return 90 * floor(random(4));
             }
 
             function colorToCode(color){
-                return "rgb(" + color.join(",") + ")";
+                return "hsl(" + color + ", 65%, 75%)";
             }
 
             function getEnemyType(colorA, colorB){
-                if(colorA === colorB) return 0; //0: ME
+                if(colorA === colorB) return EnemyType.SELF;
+                if(colorA === "null" || colorB === "null" || <?= (isset($_GET["noalliance"]) and $_GET["noalliance"] === "true") ? "true" : "false"; ?>) return EnemyType.ENEMY;
 
-                if(colorA === null || colorB === null || <?= (isset($_GET["noalliance"]) and $_GET["noalliance"] === "true") ? "true" : "false"; ?>) return 2; //2: ENEMY
+                return abs(colorA - colorB) < 30 ? EnemyType.PARTNER : EnemyType.ENEMY;
+            }
 
-                var bunsan = (pow(colorA[0] - colorB[0], 2) + pow(colorA[1] - colorB[1], 2) + pow(colorA[2] - colorB[2], 2));
-                return (bunsan < 400) ? 1 : 2; //1: FRIEND
+            function forEachBlocks(start, end, func){
+                for(var x = start[0]; x <= end[0]; x++){
+                    if(x < 0 || x >= blocks.length) continue;
+
+                    for(var y = start[1]; y <= end[1]; y++){
+                        if(y < 0 || y >= blocks[x].length) continue;
+
+                        func(blocks[x][y], x, y);
+                    }
+                }
             }
 
             sketch.setup = function(){
@@ -165,12 +186,13 @@
                 leftPadding = round((sketch.width - blockSize * width) / 2);
                 topPadding = round((sketch.height - blockSize * height) / 2);
 
-                blocks = new Array(width);
-                for(var i = 0; i < blocks.length; i++){
-                    blocks[i] = new Array(height);
-                    for(var j = 0; j < blocks[i].length; j++){
+                blocks = [];
+                for(var i = 0; i < width; i++){
+                    blocks[i] = [];
+
+                    for(var j = 0; j < height; j++){
                         blocks[i][j] = new Area(i, j, {
-                            type: (random(100) > 20) ? "null" : randomColor(128, 256)
+                            type: randomColor()
                         });
                     }
                 }
@@ -178,81 +200,75 @@
 
             sketch.update = function(){
                 if(cooltime > 0 && --cooltime > 0) return;
-
                 var currentType = null;
 
-                for(var x = 0; x < blocks.length; x++){
-                    for(var y = 0; y < blocks[x].length; y++){
-                        var area = blocks[x][y];
+                for(var x = 0; x < blocks.length; x++) for(var y = 0; y < blocks[x].length; y++){
+                    var area = blocks[x][y];
 
-                        if(area.type !== "null"){
-                            if(area.debuff && area.debuff > 0 && --area.debuff > 0){
-                                area.power -= floor(random(50, 350));
-                                if(area.power <= 0){
-                                    area.type = "null";
-                                    area.power = 0;
-                                    area.debuff = floor(area.debuff * 0.5);
+                    if(area.type === "null") continue;
 
-                                    continue;
-                                }
-                            }
+                    if(area.debuff && area.debuff > 0 && --area.debuff > 0){
+                        area.power -= floor(random(50, 350));
+                        if(area.power <= 0){
+                            area.type = "null";
+                            area.power = 0;
+                            area.debuff = floor(area.debuff * 0.5);
 
-                            if(random(10) < 5) area.power = min(99999, area.power + floor(random(5, 30)));
-                            if(random(10) < 9) area.extendTo(floor(random(4)));
-
-                            if(<?php echo (isset($_GET["disaster"]) and $_GET["disaster"] === "true") ? "true" : "false"; ?>){
-                                if(random(1000) < 2 && area.power > 2500){
-                                    var width = floor(random(2, 4)), height = floor(random(2, 4));
-
-                                    for(var i = -width; i <= width; i++){
-                                        if((x + i) < 0 || (x + i) >= blocks.length) continue;
-
-                                        for(var j = -height; j <= height; j++){
-                                            if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
-
-                                            var sideBlock = blocks[x + i][y + j];
-                                            if(sideBlock.type !== "null") sideBlock.debuff = (sideBlock.debuff && sideBlock.debuff > 0 ? sideBlock.debuff : 0) + floor(random(300, 1000));
-                                        }
-                                    }
-                                }
-                            }
-
-                            if(<?php echo (isset($_GET["rebellion"]) and $_GET["rebellion"] === "true") ? "true" : "false"; ?>){
-                                if(random(1000) < 1.5 && area.power > 1500){
-                                    var width = floor(random(1, 2)), height = floor(random(1, 2));
-                                    //var newType = randomColor(128, 256);
-
-                                    for(var i = -width; i <= width; i++){
-                                        if((x + i) < 0 || (x + i) >= blocks.length) continue;
-
-                                        for(var j = -height; j <= height; j++){
-                                            if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
-
-                                            var sideBlock = blocks[x + i][y + j];
-                                            sideBlock.type = randomRebellionColor();
-                                            sideBlock.power += floor(random(500, 3000));
-                                        }
-                                    }
-                                }
-                            }
+                            continue;
                         }
+                    }
 
-                        if(currentType !== "not yet"){
-                            if(currentType === null) currentType = area.type;
-                            else if(currentType !== area.type) currentType = "not yet";
+                    if(random(10) < 5) area.power = min(99999, area.power + floor(random(5, 30)));
+                    if(random(10) < 9) area.extendTo(floor(random(4)));
+
+                    if(<?php echo (isset($_GET["disaster"]) and $_GET["disaster"] === "true") ? "true" : "false"; ?>){
+                        if(random(1000) < 2 && area.power > 2500){
+                            var width = floor(random(2, 4)), height = floor(random(2, 4));
+
+                            forEachBlocks([x - width, y - height], [x + width, y + height], function(sideBlock){
+                                if(sideBlock.type !== "null") sideBlock.debuff = (sideBlock.debuff && sideBlock.debuff > 0 ? sideBlock.debuff : 0) + floor(random(300, 1000));
+                            });
                         }
+                    }
+
+                    if(<?php echo (isset($_GET["rebellion"]) and $_GET["rebellion"] === "true") ? "true" : "false"; ?>){
+                        if(random(1000) < 1.5 && area.power > 1500){
+                            var width = floor(random(1, 2)), height = floor(random(1, 2));
+
+                            forEachBlocks([x - width, y - height], [x + width, y + height], function(sideBlock){
+                                sideBlock.type = randomRebellionColor();
+                                sideBlock.power += floor(random(500, 3000));
+                            });
+                        }
+                    }
+
+                    if(currentType !== "not yet"){
+                        if(currentType === null) currentType = area.type;
+                        else if(currentType !== area.type) currentType = "not yet";
                     }
                 }
 
                 if(currentType !== "not yet"){
                     finalType = currentType;
                 }
-            }
+            };
 
             sketch.draw = function(){
                 if(finalType !== null){
                     sketch.fillStyle = colorToCode(finalType);
                     sketch.fillRect(0, 0, sketch.width, sketch.height);
+
+                    sketch.textAlign    = "center";
+                    sketch.textBaseline = "middle";
+                    sketch.font         = (blockSize * 16) + "px Quantico";
+
+                    sketch.lineWidth = 10;
+
+                    sketch.strokeStyle = "#222222";
+                    sketch.strokeText("GAME OVER", sketch.width / 2, sketch.height / 2);
+
+                    sketch.fillStyle = "#E0E4CC";
+                    sketch.fillText("GAME OVER", sketch.width / 2, sketch.height / 2);
 
                     sketch.pause();
                     return;
@@ -261,24 +277,20 @@
                 for(var x = 0; x < blocks.length; x++){
                     for(var y = 0; y < blocks[x].length; y++){
                         var area = blocks[x][y];
+
                         if(area.type !== "null" && area.power > 0){
                             sketch.fillStyle = colorToCode(area.type);
                             sketch.fillRect(leftPadding + area.x * blockSize, topPadding + area.y * blockSize, blockSize, blockSize);
 
-                            for(var d = 0; d < 4; d++){
-                                if(area.canGoTo(d)){
-                                    var side = area.getSide(d);
-                                    area.drawSideLine(d, getEnemyType(area.type, side.type));
-                                }
-                            }
+                            for(var d = 0; d < 4; d++) if(area.canGoTo(d)) area.drawSideLine(d, getEnemyType(area.type, area.getSide(d).type));
 
-                            var debuff = area.debuff && area.debuff > 0;
-                            if(<?php echo (isset($_GET["showtext"]) and $_GET["showtext"] === "true") ? "true" : "false"; ?> || debuff){
-                                sketch.textAlign = "center";
+                            var debuffing = area.debuff && area.debuff > 0;
+                            if(<?php echo (isset($_GET["showtext"]) and $_GET["showtext"] === "true") ? "true" : "false"; ?> || debuffing){
+                                sketch.textAlign    = "center";
                                 sketch.textBaseline = "middle";
-                                sketch.font = (blockSize * 0.1) + "px Consolas";
+                                sketch.font         = (blockSize * 0.1) + "px Consolas";
 
-                                sketch.fillStyle = debuff ? "red" : "black";
+                                sketch.fillStyle = debuffing ? "red" : "black";
                                 sketch.fillText(area.power, leftPadding + (area.x + 0.5) * blockSize, topPadding + (area.y + 0.5) * blockSize);
                             }
                         }
@@ -286,9 +298,9 @@
                 }
 
                 if(cooltime > 0){
-                    sketch.textAlign = "center";
+                    sketch.textAlign    = "center";
                     sketch.textBaseline = "middle";
-                    sketch.font = (blockSize * 8) + "px Quantico";
+                    sketch.font         = (blockSize * 8) + "px Quantico";
 
                     sketch.lineWidth = 10;
 
@@ -297,11 +309,10 @@
 
                     sketch.fillStyle = "#E0E4CC";
                     sketch.fillText(cooltime, sketch.width / 2, sketch.height / 2);
-
                 }
             };
 
-            sketch.click = function(){
+            sketch.mousedown = function(){
                 var x = floor((sketch.mouse.x - leftPadding) / blockSize);
                 var y = floor((sketch.mouse.y - topPadding) / blockSize);
 
@@ -311,16 +322,9 @@
                 if(area.type !== "null"){
                     var width = floor(random(0, 2)), height = floor(random(0, 2));
 
-                    for(var i = -width; i <= width; i++){
-                        if((x + i) < 0 || (x + i) >= blocks.length) continue;
-
-                        for(var j = -height; j <= height; j++){
-                            if((y + j) < 0 || (y + j) >= blocks[x + i].length) continue;
-
-                            var sideBlock = blocks[x + i][y + j];
-                            if(sideBlock.type === area.type) sideBlock.power += 1000;
-                        }
-                    }
+                    forEachBlocks([x - width, y - height], [x + width, y + height], function(sideBlock){
+                        if(sideBlock.type === area.type) sideBlock.power += 2000;
+                    });
                 }
             }
         </script>
