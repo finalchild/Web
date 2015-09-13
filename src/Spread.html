@@ -221,7 +221,7 @@
                     if(random(10) < 5) area.power = min(99999, area.power + floor(random(5, 30)));
                     if(random(10) < 9) area.extendTo(floor(random(4)));
 
-                    if(<?php echo (isset($_GET["disaster"]) and $_GET["disaster"] === "true") ? "true" : "false"; ?>){
+                    if(<?= (isset($_GET["disaster"]) and $_GET["disaster"] === "true") ? "true" : "false"; ?>){
                         if(random(1000) < 2 && area.power > 2500){
                             var width = floor(random(2, 4)), height = floor(random(2, 4));
 
@@ -231,7 +231,7 @@
                         }
                     }
 
-                    if(<?php echo (isset($_GET["rebellion"]) and $_GET["rebellion"] === "true") ? "true" : "false"; ?>){
+                    if(<?= (isset($_GET["rebellion"]) and $_GET["rebellion"] === "true") ? "true" : "false"; ?>){
                         if(random(1000) < 1.5 && area.power > 1500){
                             var width = floor(random(1, 2)), height = floor(random(1, 2));
 
@@ -285,7 +285,7 @@
                             for(var d = 0; d < 4; d++) if(area.canGoTo(d)) area.drawSideLine(d, getEnemyType(area.type, area.getSide(d).type));
 
                             var debuffing = area.debuff && area.debuff > 0;
-                            if(<?php echo (isset($_GET["showtext"]) and $_GET["showtext"] === "true") ? "true" : "false"; ?> || debuffing){
+                            if(<?= (isset($_GET["showtext"]) and $_GET["showtext"] === "true") ? "true" : "false"; ?> || debuffing){
                                 sketch.textAlign    = "center";
                                 sketch.textBaseline = "middle";
                                 sketch.font         = (blockSize * 0.1) + "px Consolas";
