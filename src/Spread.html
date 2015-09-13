@@ -192,7 +192,7 @@
 
                     for(var j = 0; j < height; j++){
                         blocks[i][j] = new Area(i, j, {
-                            type: randomColor()
+                            type: (random() > 0.5) ? randomColor() : "null"
                         });
                     }
                 }
