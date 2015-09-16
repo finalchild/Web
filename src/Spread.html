@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" /> <title>Spread</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="viewport" content="maximum-scale=1.0, user-scalable=no" />
 
         <meta name="theme-color" content="#222222">
 
@@ -178,7 +178,7 @@
             }
 
             sketch.setup = function(){
-                blockSize = floor(min(sketch.width, sketch.height) / 35);
+                blockSize = floor(max(sketch.width, sketch.height) / 40);
 
                 var width = floor(sketch.width / blockSize);
                 var height = floor(sketch.height / blockSize);
@@ -288,7 +288,7 @@
                             if(<?= (isset($_GET["showtext"]) and $_GET["showtext"] === "true") ? "true" : "false"; ?> || debuffing){
                                 sketch.textAlign    = "center";
                                 sketch.textBaseline = "middle";
-                                sketch.font         = (blockSize * 0.1) + "px Consolas";
+                                sketch.font         = ceil(blockSize / 4 / sketch.width * 100) + "vw Inconsolata";
 
                                 sketch.fillStyle = debuffing ? "red" : "black";
                                 sketch.fillText(area.power, leftPadding + (area.x + 0.5) * blockSize, topPadding + (area.y + 0.5) * blockSize);
