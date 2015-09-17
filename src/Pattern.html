@@ -76,8 +76,8 @@
             sketch.draw = function(){
                 sketch.lineWidth = 2;
 
-                for(var x = 0; x < width; x++){
-                    for(var y = 0; y < height; y++){
+                for(var x = -1; x <= width; x++){
+                    for(var y = -1; y <= height; y++){
                         var centerX = x * size + halfsize;
                         var centerY = y * size + halfsize;
 
