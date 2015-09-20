@@ -29,7 +29,7 @@
             });
 
             function validate(val){
-                return max(0, min(2, val));
+                return max(0, min(2.5, val));
             }
 
             sketch.mousedown = sketch.setup = function(){
@@ -39,45 +39,60 @@
                 width = ceil(sketch.width / size);
                 height = ceil(sketch.height / size);
 
-                                  topLeft     = 1.0; topRight    = 1.0;
-                leftTop    = 1.0;                                       rightTop    = 1.0;
-                leftBottom = 1.0;                                       rightBottom = 1.0;
-                                  bottomLeft  = 1.0; bottomRight = 1.0;
+                             topLeft     = topRight    =
+                leftTop    =                                   rightTop    =
+                leftBottom =                                   rightBottom =
+                             bottomLeft  = bottomRight = random();
             };
 
             sketch.update = function(){
-                var a = random(0.25, 0.75) * (round(random()) * 2 - 1);
+                var a = random(0.25, 0.5) * (round(random()) * 2 - 1);
 
-                switch(floor(random(4))){
+                switch(floor(random(8))){
                     case 0:
                         leftTop = validate(leftTop + a);
-                        leftBottom = validate(leftBottom - a);
+                        break;
+
+                    case 4:
+                        leftBottom = validate(leftBottom + a);
                         break;
 
                     case 1:
                         topLeft = validate(topLeft + a);
-                        topRight = validate(topRight - a);
+                        break;
+
+                    case 5:
+                        topRight = validate(topRight + a);
                         break;
 
                     case 2:
                         rightTop = validate(rightTop + a);
-                        rightBottom = validate(rightBottom - a);
+                        break;
+
+                    case 6:
+                        rightBottom = validate(rightBottom + a);
                         break;
 
                     case 3:
                         bottomLeft = validate(bottomLeft + a);
-                        bottomRight = validate(bottomRight - a);
+                        break;
+
+                    case 7:
+                        bottomRight = validate(bottomRight + a);
                         break;
                 }
             };
 
-            var colors = ["#808080", "#8080FF", "#80FF80", "#80FFFF", "#FF8080", "#FF80FF", "#FFFF88", "#FFFFFF"];
+            var colors = ["#AEC6CF", "#FFB347", "#FF6961", "#CFCFC4", "#B19CD9", "#836953", "#DEA5A4", "#F49AC2"];
 
             sketch.draw = function(){
-                sketch.lineWidth = 2;
+                colors = colors.map(function(c){ return [random(), c]; }).sort().map(function(c){ return c[1]; });
 
-                for(var x = 0; x < width; x++){
-                    for(var y = 0; y < height; y++){
+                sketch.lineCap = "round";
+                sketch.lineWidth = size / 25;
+
+                for(var x = -1; x <= width; x++){
+                    for(var y = -1; y <= height; y++){
                         var centerX = x * size + halfsize;
                         var centerY = y * size + halfsize;
 
@@ -101,6 +116,12 @@
 
                             sketch.stroke();
                         }
+
+                        sketch.fillStyle = "#E0E4CC";
+
+                        sketch.beginPath();
+                        sketch.arc(centerX, centerY, size / 20, 0, TWO_PI);
+                        sketch.fill();
                     }
                 }
             };
