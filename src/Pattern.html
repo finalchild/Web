@@ -29,7 +29,7 @@
             });
 
             function validate(val){
-                return max(0, min(2.5, val));
+                return <?= (rand(0, 1) == 0) ? "random(1.75)" : "max(0, min(1.75, val))"; ?>;
             }
 
             sketch.mousedown = sketch.setup = function(){
