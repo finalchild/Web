@@ -32,7 +32,7 @@
                 return <?= (rand(0, 1) == 0) ? "random(1.75)" : "max(0, min(1.75, val))"; ?>;
             }
 
-            sketch.mousedown = sketch.setup = function(){
+            sketch.setup = function(){
                 size = ((sketch.width + sketch.height) / 2) / 20;
                 halfsize = size / 2;
 
@@ -124,6 +124,14 @@
                         sketch.fill();
                     }
                 }
+            };
+
+            sketch.mousedown = function(){
+                sketch.toggle();
+            }
+
+            sketch.keydown = function(){
+                if(sketch.keys.SPACE) sketch.setup();
             };
         </script>
     </body>

@@ -45,7 +45,7 @@
                 gap = min(sketch.width, sketch.height) / 25;
             };
 
-            sketch.click = function(){
+            sketch.mousedown = function(){
                 points.push(new Point(sketch.mouse.x, sketch.mouse.y));
             };
 

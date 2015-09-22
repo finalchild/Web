@@ -21,8 +21,16 @@
         <script src="../libs/sketch.js/js/sketch.js"></script>
         <script type="text/javascript">
             var sketch = Sketch.create({
-                container: document.getElementById("container")
+                container: document.getElementById("container"), autopause: false
             });
+
+            sketch.setup = function(){
+                //TODO: Implement this method
+            };
+
+            sketch.mousedown = function(){
+                sketch.toggle();
+            };
         </script>
     </body>
 </html>
