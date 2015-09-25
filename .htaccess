@@ -1,4 +1,4 @@
 AddType application/x-httpd-php .php .html .htm
 SetEnv TZ "Asia/Seoul"
-RedirectMatch 403 /\.git
+RedirectMatch 404 /\.git
 
